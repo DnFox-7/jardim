@@ -7,11 +7,10 @@
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   transition: 0.3s;
 }
 
-/* 🌙 temas */
 body.dark {
   background: #0b2e22;
   color: white;
@@ -29,10 +28,6 @@ body.light {
   text-align: center;
 }
 
-h1 {
-  margin-bottom: 5px;
-}
-
 .chat {
   height: 420px;
   overflow-y: auto;
@@ -47,7 +42,6 @@ h1 {
   margin: 8px;
   border-radius: 10px;
   max-width: 80%;
-  line-height: 1.4;
 }
 
 .user {
@@ -106,24 +100,22 @@ button:hover {
 <button onclick="toggleTheme()">🌙 / ☀️ Tema</button>
 
 <div class="chat" id="chat">
-  <div class="msg ia">🌱 Olá! Envie uma pergunta ou uma foto de planta 📸</div>
+  <div class="msg ia">🌱 Olá! Pergunte ou envie uma foto de planta 📸</div>
 </div>
 
-<!-- FOTO -->
 <input type="file" id="file" accept="image/*" onchange="previewImage(event)">
 <br>
 <img id="preview" class="preview">
 
-<!-- INPUT -->
 <div class="input-area">
-  <input id="text" placeholder="Pergunte ou descreva a planta...">
+  <input id="text" placeholder="Pergunte sobre plantas...">
   <button onclick="enviar()">Enviar</button>
 </div>
 
 </div>
 
 <script>
-const API_KEY = "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"; 
+const API_KEY = "SUA_NOVA_CHAVE_AQUI";
 
 let imageBase64 = null;
 
@@ -133,79 +125,92 @@ function toggleTheme(){
   document.body.classList.toggle("light");
 }
 
-// 📸 preview imagem
+// 📸 imagem
 function previewImage(event){
   const file = event.target.files[0];
   const reader = new FileReader();
 
   reader.onload = function(){
-    imageBase64 = reader.result;
+    imageBase64 = reader.result; // já vem em base64 correto
     document.getElementById("preview").src = imageBase64;
-  }
+  };
 
   reader.readAsDataURL(file);
 }
 
-// 🤖 enviar para IA
+// 🤖 enviar
 async function enviar(){
   const text = document.getElementById("text").value;
   const chat = document.getElementById("chat");
 
   if(!text && !imageBase64) return;
 
-  chat.innerHTML += `<div class="msg user">${text || "📸 Imagem enviada"}</div>`;
+  chat.innerHTML += `<div class="msg user">${text || "📸 imagem enviada"}</div>`;
   document.getElementById("text").value = "";
 
-  chat.innerHTML += `<div class="msg ia">🌿 analisando...</div>`;
+  const loading = document.createElement("div");
+  loading.className = "msg ia";
+  loading.innerText = "🌿 analisando...";
+  chat.appendChild(loading);
 
   let content;
 
-  // 📸 COM IMAGEM
+  // 📸 com imagem
   if(imageBase64){
     content = [
       {
-        type: "text",
-        text: text || "Analise essa planta e me diga o que é e como cuidar."
+        type: "input_text",
+        text: text || "Analise essa planta e diga o que é e como cuidar."
       },
       {
-        type: "image_url",
-        image_url: {
-          url: imageBase64
-        }
+        type: "input_image",
+        image_url: imageBase64
       }
     ];
   } 
-  // 💬 SÓ TEXTO
+  // 💬 só texto
   else {
-    content = text;
+    content = [
+      {
+        type: "input_text",
+        text: text
+      }
+    ];
   }
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "Você é um jardineiro especialista em plantas. Responda com carinho, simplicidade e dicas práticas."
-        },
-        {
-          role: "user",
-          content: content
-        }
-      ]
-    })
-  });
+  try {
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `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}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        input: [
+          {
+            role: "user",
+            content: content
+          }
+        ]
+      })
+    });
 
-  const data = await response.json();
+    const data = await response.json();
 
-  const resposta = data.choices?.[0]?.message?.content || "Erro ao responder 😢";
+    loading.remove();
 
-  chat.innerHTML += `<div class="msg ia">${resposta}</div>`;
+    const resposta =
+      data.output?.[0]?.content?.[0]?.text ||
+      "Não consegui analisar 😢";
+
+    chat.innerHTML += `<div class="msg ia">${resposta}</div>`;
+    chat.scrollTop = chat.scrollHeight;
+
+  } catch (err) {
+    loading.remove();
+    chat.innerHTML += `<div class="msg ia">❌ erro na IA</div>`;
+  }
 
   imageBase64 = null;
   document.getElementById("preview").src = "";
