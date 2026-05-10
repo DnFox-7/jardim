@@ -146,7 +146,6 @@
             text-align: center;
         }
 
-        /* --- CORAÇÕES --- */
         .heart-particle {
             position: fixed;
             pointer-events: none;
@@ -162,8 +161,7 @@
 </head>
 <body>
 
-    <!-- Verifique se o nome do arquivo na pasta msc está correto -->
-    <audio id="musica-fundo" src="msc/mae.mp3" loop></audio>
+    <audio id="musica-fundo" src="msc/mae.mp3" preload="auto" loop></audio>
 
     <div id="preloader">
         <button id="btn-iniciar">Abrir Presente ❤️</button>
@@ -179,34 +177,14 @@
 
     <div id="conteudo">
         <h1>Você é única, Mami!</h1>
-
         <div class="mural">
-            <div class="item-mural">
-                <img src="img/paty4.jpeg">
-                <p class="frase">"Seu sorriso ilumina tudo!"</p>
-            </div>
-            <div class="item-mural">
-                <img src="img/paty5.jpeg">
-                <p class="frase">"Minha rainha!"</p>
-            </div>
-            <div class="item-mural">
-                <img src="img/paty3.jpeg">
-                <p class="frase">"Amor infinito!"</p>
-            </div>
-            <div class="item-mural">
-                <img src="img/paty.jpeg">
-                <p class="frase">"Obrigado por tudo!"</p>
-            </div>
-            <div class="item-mural">
-                <img src="img/paty2.JPG">
-                <p class="frase">"Amor que não se mede!"</p>
-            </div>
-            <div class="item-mural">
-                <img src="img/paty6.jpeg">
-                <p class="frase">"Nossa maior inspiração!"</p>
-            </div>
+            <div class="item-mural"><img src="img/paty4.jpeg"><p class="frase">"Seu sorriso ilumina tudo!"</p></div>
+            <div class="item-mural"><img src="img/paty5.jpeg"><p class="frase">"Minha rainha!"</p></div>
+            <div class="item-mural"><img src="img/paty3.jpeg"><p class="frase">"Amor infinito!"</p></div>
+            <div class="item-mural"><img src="img/paty.jpeg"><p class="frase">"Obrigado por tudo!"</p></div>
+            <div class="item-mural"><img src="img/paty2.JPG"><p class="frase">"Amor que não se mede!"</p></div>
+            <div class="item-mural"><img src="img/paty6.jpeg"><p class="frase">"Nossa maior inspiração!"</p></div>
         </div>
-        
         <footer style="text-align: center; margin: 80px 0; color: #ff8fa3; font-weight: bold;">
             Feito com todo amor do mundo ❤️
         </footer>
@@ -242,15 +220,17 @@
         }
 
         btn.addEventListener('click', () => {
-            // Inicia a música
-            musica.play();
+            // Tenta dar o play e trata erro caso o arquivo não exista ou o navegador bloqueie
+            musica.play().catch(error => {
+                console.log("Erro ao tocar música. Verifique o caminho do arquivo: ", error);
+            });
 
             btn.style.display = 'none';
             document.getElementById('foto-pre').style.display = 'block';
             barraBox.style.display = 'block';
             statusText.style.display = 'block';
 
-            let tempoTotal = 30000; 
+            let tempoTotal = 30000; // 30 segundos de carregamento "fake"
             let progresso = 0;
             let intervalo = 100; 
 
