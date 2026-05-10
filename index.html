@@ -39,6 +39,7 @@
             justify-content: center;
             align-items: center;
             z-index: 2000;
+            transition: opacity 1s ease;
         }
 
         .foto-central {
@@ -53,9 +54,9 @@
         }
 
         @keyframes pulse-photo {
-            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 77, 109, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255, 77, 109, 0.7); }
-            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 77, 109, 0.4); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         #btn-iniciar {
@@ -69,8 +70,9 @@
             cursor: pointer;
             box-shadow: 0 10px 20px rgba(255, 77, 109, 0.3);
             transition: 0.3s;
-            z-index: 2001;
         }
+
+        #btn-iniciar:hover { transform: scale(1.1); background: var(--cor-secundaria); }
 
         .barra-container {
             width: 280px;
@@ -87,7 +89,6 @@
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, var(--cor-principal), var(--cor-secundaria));
-            box-shadow: 0 0 10px var(--cor-principal);
             transition: width 0.1s linear;
         }
 
@@ -97,7 +98,8 @@
             padding: 40px 20px;
             max-width: 1200px;
             margin: 0 auto;
-            perspective: 1000px;
+            opacity: 0;
+            transition: opacity 1.5s ease;
         }
 
         h1 {
@@ -105,22 +107,28 @@
             font-size: clamp(2.5rem, 8vw, 4rem);
             color: var(--cor-principal);
             text-align: center;
+            margin-bottom: 40px;
         }
 
         .mural {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            padding: 20px;
+            gap: 30px;
         }
 
         .item-mural {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px);
-            border-radius: 25px;
-            padding: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            transition: 0.5s;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            transition: 0.4s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .item-mural:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(255, 77, 109, 0.2);
         }
 
         .item-mural img {
@@ -132,13 +140,13 @@
 
         .frase {
             font-family: 'Dancing Script', cursive;
-            font-size: 1.6rem;
-            margin-top: 20px;
+            font-size: 1.8rem;
+            margin-top: 15px;
             color: #d63384;
             text-align: center;
         }
 
-        /* --- PARTICULAS --- */
+        /* --- CORAÇÕES --- */
         .heart-particle {
             position: fixed;
             pointer-events: none;
@@ -154,19 +162,19 @@
 </head>
 <body>
 
-    <!-- Elemento de Áudio (Coloque musica.mp3 na mesma pasta) -->
-    <audio id="musica-fundo" src="musica.mp3" loop></audio>
+    <!-- Verifique se o nome do arquivo na pasta msc está correto -->
+    <audio id="musica-fundo" src="msc/mae.mp3" loop></audio>
 
     <div id="preloader">
         <button id="btn-iniciar">Abrir Presente ❤️</button>
         
-        <img src="img/paty1.jpeg" class="foto-central" id="foto-pre">
+        <img src="img/paty00.jpeg" class="foto-central" id="foto-pre">
         
         <div class="barra-container" id="barra-box">
             <div class="barra-progresso" id="minha-barra"></div>
         </div>
         
-        <p id="status-text" style="display:none; color: var(--cor-principal); margin-top: 15px; font-weight: bold; font-size: 1.1rem;"></p>
+        <p id="status-text" style="display:none; color: var(--cor-principal); margin-top: 15px; font-weight: 600; font-size: 1.1rem;"></p>
     </div>
 
     <div id="conteudo">
@@ -199,8 +207,8 @@
             </div>
         </div>
         
-        <footer style="text-align: center; margin: 60px 0; color: #ff8fa3;">
-            Feito com amor pelos seus filhos ❤️
+        <footer style="text-align: center; margin: 80px 0; color: #ff8fa3; font-weight: bold;">
+            Feito com todo amor do mundo ❤️
         </footer>
     </div>
 
@@ -210,12 +218,13 @@
         const barraBox = document.getElementById('barra-box');
         const statusText = document.getElementById('status-text');
         const musica = document.getElementById('musica-fundo');
+        const preloader = document.getElementById('preloader');
+        const conteudo = document.getElementById('conteudo');
         
         const mensagens = [
             "Buscando momentos especiais...",
             "Lembrando do seu carinho...",
-            "Organizando as melhores memórias...",
-            "Contando cada batida do coração...",
+            "Organizando as memórias...",
             "Você merece o mundo...",
             "Quase pronto, Mamãe..."
         ];
@@ -226,48 +235,46 @@
             const icons = ['❤️', '💖', '✨', '🌸', '💘'];
             heart.innerHTML = icons[Math.floor(Math.random() * icons.length)];
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
-            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
             document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 7000);
+            setTimeout(() => heart.remove(), 6000);
         }
 
         btn.addEventListener('click', () => {
-            // Tenta tocar a música
-            musica.play().catch(e => console.log("O navegador bloqueou o autoplay. Clique novamente."));
+            // Inicia a música
+            musica.play();
 
             btn.style.display = 'none';
             document.getElementById('foto-pre').style.display = 'block';
             barraBox.style.display = 'block';
             statusText.style.display = 'block';
 
-            let tempoTotal = 30000; // 30 segundos
-            let intervaloTempo = 100; // atualizar a cada 0.1s
+            let tempoTotal = 30000; 
             let progresso = 0;
-            let passo = (intervaloTempo / tempoTotal) * 100;
+            let intervalo = 100; 
 
             const timer = setInterval(() => {
-                progresso += passo;
+                progresso += (intervalo / tempoTotal) * 100;
                 barra.style.width = progresso + '%';
 
-                // Troca as mensagens baseado na porcentagem
                 let msgIndex = Math.floor((progresso / 100) * mensagens.length);
                 if(mensagens[msgIndex]) statusText.innerText = mensagens[msgIndex];
 
-                // Cria alguns corações já no carregamento
-                if(Math.random() > 0.8) createHeart();
+                if(Math.random() > 0.7) createHeart();
 
                 if (progresso >= 100) {
                     clearInterval(timer);
-                    document.getElementById('preloader').style.opacity = '0';
+                    preloader.style.opacity = '0';
+                    
                     setTimeout(() => {
-                        document.getElementById('preloader').style.display = 'none';
-                        document.getElementById('conteudo').style.display = 'block';
-                        // Chuva constante de corações depois que abre
-                        setInterval(createHeart, 300);
+                        preloader.style.display = 'none';
+                        conteudo.style.display = 'block';
+                        setTimeout(() => conteudo.style.opacity = '1', 50);
+                        setInterval(createHeart, 400);
                     }, 1000);
                 }
-            }, intervaloTempo);
+            }, intervalo);
         });
     </script>
 </body>
