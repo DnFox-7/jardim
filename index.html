@@ -42,19 +42,20 @@
         }
 
         .foto-central {
-            width: 180px;
-            height: 180px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             border: 5px solid var(--cor-principal);
             object-fit: cover;
             display: none;
-            box-shadow: 0 0 30px rgba(255, 77, 109, 0.5);
-            animation: floating 3s ease-in-out infinite;
+            box-shadow: 0 0 50px rgba(255, 77, 109, 0.4);
+            animation: pulse-photo 2s infinite;
         }
 
-        @keyframes floating {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+        @keyframes pulse-photo {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 77, 109, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255, 77, 109, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 77, 109, 0.4); }
         }
 
         #btn-iniciar {
@@ -71,7 +72,24 @@
             z-index: 2001;
         }
 
-        #btn-iniciar:hover { transform: scale(1.1); background: #ff3355; }
+        .barra-container {
+            width: 280px;
+            height: 12px;
+            background: #eee;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: none;
+            overflow: hidden;
+            border: 2px solid #fff;
+        }
+
+        .barra-progresso {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--cor-principal), var(--cor-secundaria));
+            box-shadow: 0 0 10px var(--cor-principal);
+            transition: width 0.1s linear;
+        }
 
         /* --- MURAL --- */
         #conteudo {
@@ -79,15 +97,14 @@
             padding: 40px 20px;
             max-width: 1200px;
             margin: 0 auto;
-            perspective: 1000px; /* Para o efeito 3D */
+            perspective: 1000px;
         }
 
         h1 {
             font-family: 'Dancing Script', cursive;
             font-size: clamp(2.5rem, 8vw, 4rem);
             color: var(--cor-principal);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
+            text-align: center;
         }
 
         .mural {
@@ -102,16 +119,8 @@
             backdrop-filter: blur(15px);
             border-radius: 25px;
             padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            transform-style: preserve-3d;
-        }
-
-        /* Efeito de inclinação ao passar o mouse */
-        .item-mural:hover {
-            transform: rotateX(5deg) rotateY(5deg) translateY(-10px);
-            background: rgba(255, 255, 255, 0.9);
+            transition: 0.5s;
         }
 
         .item-mural img {
@@ -119,7 +128,6 @@
             height: 350px;
             object-fit: cover;
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
         .frase {
@@ -127,9 +135,10 @@
             font-size: 1.6rem;
             margin-top: 20px;
             color: #d63384;
+            text-align: center;
         }
 
-        /* --- CORAÇÕES --- */
+        /* --- PARTICULAS --- */
         .heart-particle {
             position: fixed;
             pointer-events: none;
@@ -138,129 +147,127 @@
         }
 
         @keyframes fallAndFade {
-            0% { transform: translateY(-10vh) rotate(0deg) scale(1); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(360deg) scale(0.5); opacity: 0; }
-        }
-
-        .barra-container {
-            width: 250px;
-            height: 8px;
-            background: #eee;
-            border-radius: 10px;
-            margin-top: 30px;
-            display: none;
-            overflow: hidden;
-        }
-
-        .barra-progresso {
-            width: 0%;
-            height: 100%;
-            background: var(--cor-principal);
-            box-shadow: 0 0 10px var(--cor-principal);
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Elemento de Áudio (Coloque musica.mp3 na mesma pasta) -->
+    <audio id="musica-fundo" src="musica.mp3" loop></audio>
+
     <div id="preloader">
         <button id="btn-iniciar">Abrir Presente ❤️</button>
+        
         <img src="img/paty1.jpeg" class="foto-central" id="foto-pre">
+        
         <div class="barra-container" id="barra-box">
             <div class="barra-progresso" id="minha-barra"></div>
         </div>
-        <p id="status-text" style="display:none; color: var(--cor-principal); margin-top: 15px; font-weight: bold;">Carregando amor...</p>
+        
+        <p id="status-text" style="display:none; color: var(--cor-principal); margin-top: 15px; font-weight: bold; font-size: 1.1rem;"></p>
     </div>
 
     <div id="conteudo">
-        <center>
-            <h1 id="titulo-principal">Você é única, Mami!</h1>
-        </center>
+        <h1>Você é única, Mami!</h1>
 
         <div class="mural">
-            
             <div class="item-mural">
-                <img src="img/paty4.jpeg" alt="Momento 1">
+                <img src="img/paty4.jpeg">
                 <p class="frase">"Seu sorriso ilumina tudo!"</p>
             </div>
             <div class="item-mural">
-                <img src="img/paty5.jpeg" alt="Momento 2">
+                <img src="img/paty5.jpeg">
                 <p class="frase">"Minha rainha!"</p>
             </div>
             <div class="item-mural">
-                <img src="img/paty3.jpeg" alt="Momento 3">
+                <img src="img/paty3.jpeg">
                 <p class="frase">"Amor infinito!"</p>
             </div>
             <div class="item-mural">
-                <img src="img/paty.jpeg" alt="Momento 4">
+                <img src="img/paty.jpeg">
                 <p class="frase">"Obrigado por tudo!"</p>
             </div>
             <div class="item-mural">
-                <img src="img/paty2.JPG" alt="Momento 4">
+                <img src="img/paty2.JPG">
                 <p class="frase">"Amor que não se mede!"</p>
             </div>
             <div class="item-mural">
-                <img src="img/paty6.jpeg" alt="Momento 4">
+                <img src="img/paty6.jpeg">
                 <p class="frase">"Nossa maior inspiração!"</p>
             </div>
         </div>
         
-        <footer style="text-align: center; margin-top: 60px; padding-bottom: 40px; color: #ff8fa3;">
-            Com todo o amor dos seasu filhos ❤️
+        <footer style="text-align: center; margin: 60px 0; color: #ff8fa3;">
+            Feito com amor pelos seus filhos ❤️
         </footer>
     </div>
 
     <script>
         const btn = document.getElementById('btn-iniciar');
         const barra = document.getElementById('minha-barra');
-        const fotoPre = document.getElementById('foto-pre');
         const barraBox = document.getElementById('barra-box');
-        const preloader = document.getElementById('preloader');
-        const conteudo = document.getElementById('conteudo');
+        const statusText = document.getElementById('status-text');
+        const musica = document.getElementById('musica-fundo');
+        
+        const mensagens = [
+            "Buscando momentos especiais...",
+            "Lembrando do seu carinho...",
+            "Organizando as melhores memórias...",
+            "Contando cada batida do coração...",
+            "Você merece o mundo...",
+            "Quase pronto, Mamãe..."
+        ];
 
-        // Função para criar chuva de corações realistas
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart-particle');
-            
-            // Variedade de corações
             const icons = ['❤️', '💖', '✨', '🌸', '💘'];
             heart.innerHTML = icons[Math.floor(Math.random() * icons.length)];
-            
             heart.style.left = Math.random() * 100 + 'vw';
             heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
             heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
-            heart.style.opacity = Math.random();
-            
             document.body.appendChild(heart);
             setTimeout(() => heart.remove(), 7000);
         }
 
         btn.addEventListener('click', () => {
-            btn.style.display = 'none';
-            fotoPre.style.display = 'block';
-            barraBox.style.display = 'block';
-            document.getElementById('status-text').style.display = 'block';
+            // Tenta tocar a música
+            musica.play().catch(e => console.log("O navegador bloqueou o autoplay. Clique novamente."));
 
+            btn.style.display = 'none';
+            document.getElementById('foto-pre').style.display = 'block';
+            barraBox.style.display = 'block';
+            statusText.style.display = 'block';
+
+            let tempoTotal = 30000; // 30 segundos
+            let intervaloTempo = 100; // atualizar a cada 0.1s
             let progresso = 0;
-            const intervalo = setInterval(() => {
-                progresso += 2;
+            let passo = (intervaloTempo / tempoTotal) * 100;
+
+            const timer = setInterval(() => {
+                progresso += passo;
                 barra.style.width = progresso + '%';
 
+                // Troca as mensagens baseado na porcentagem
+                let msgIndex = Math.floor((progresso / 100) * mensagens.length);
+                if(mensagens[msgIndex]) statusText.innerText = mensagens[msgIndex];
+
+                // Cria alguns corações já no carregamento
+                if(Math.random() > 0.8) createHeart();
+
                 if (progresso >= 100) {
-                    clearInterval(intervalo);
-                    
-                    preloader.style.transition = 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                    preloader.style.opacity = '0';
-                    
+                    clearInterval(timer);
+                    document.getElementById('preloader').style.opacity = '0';
                     setTimeout(() => {
-                        preloader.style.display = 'none';
-                        conteudo.style.display = 'block';
-                        
-                        // Inicia a chuva de corações infinita
-                        setInterval(createHeart, 400);
-                    }, 1500);
+                        document.getElementById('preloader').style.display = 'none';
+                        document.getElementById('conteudo').style.display = 'block';
+                        // Chuva constante de corações depois que abre
+                        setInterval(createHeart, 300);
+                    }, 1000);
                 }
-            }, 60);
+            }, intervaloTempo);
         });
     </script>
 </body>
